@@ -1,5 +1,5 @@
 -- |
--- Module      : Main
+-- Module      : Conway.Core.Types
 -- Description :
 -- Copyright   : (c) Jonatan H Sundqvist, 2015
 -- License     : MIT
@@ -9,6 +9,12 @@
 --
 
 -- Created October 25 2015
+
+-- TODO | - Use Foldable, Monoid and Traversable instances for Universe (?)
+--        - Define API, hide raw constructors (?)
+
+-- SPEC | -
+--        -
 
 
 
@@ -21,41 +27,28 @@
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- API
 --------------------------------------------------------------------------------------------------------------------------------------------
-module Main where
+module Conway.Core.Types where
 
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- We'll need these
 --------------------------------------------------------------------------------------------------------------------------------------------
-import Text.Printf
-
-import Conway.Core
-import Conway.Rendering.Console
 
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
--- Entry point
+-- Types
 --------------------------------------------------------------------------------------------------------------------------------------------
+
 -- |
-main :: IO ()
-main = do
-  setTitle "Conway's Game of Life"
-  animate 3 . take 10 $ simulate initial
-  mapM putStrLn . replicate (height initial) . replicate 30 $ ' '
-  cursorUp (height initial)
-  putStrLn . unlines . map (centre ' ' 30) $ ["",
-                                              "THANKS FOR WATCHING",
-                                              "",
-                                              "Conway's Game of Life",
-                                              "by",
-                                              "J. H. Sundqvist"]
-  wait 4.5
-  cursorUp (7)
-  mapM putStrLn . replicate 8 . replicate 30 $ ' '
-  cursorUp (7)
-  putStrLn $ centre ' ' 30 "GOOD BYE"
-  cursorDown $ 7
-  where
-    centre c ln t = let d = fromIntegral (ln - length t)/2 in replicate (floor d) c ++ t ++ replicate (ceiling d) c
+newtype Universe = Universe { cells :: [[Cell]] } -- deriving (Functor)
+
+
+-- |
+newtype Neighbours n = Neighbours [[(n, Cell)]]
+
+
+-- |
+-- TODO: Rename (?)
+data Cell = Dead | Alive deriving (Eq, Ord, Show)
