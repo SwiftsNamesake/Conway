@@ -30,8 +30,7 @@ module Main where
 --------------------------------------------------------------------------------------------------------------------------------------------
 import Text.Printf
 
-import Conway.Core
-import Conway.Rendering.Console
+import qualified Conway.Rendering.Console as Console
 
 
 
@@ -40,22 +39,4 @@ import Conway.Rendering.Console
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- |
 main :: IO ()
-main = do
-  setTitle "Conway's Game of Life"
-  animate 3 . take 10 $ simulate initial
-  mapM putStrLn . replicate (height initial) . replicate 30 $ ' '
-  cursorUp (height initial)
-  putStrLn . unlines . map (centre ' ' 30) $ ["",
-                                              "THANKS FOR WATCHING",
-                                              "",
-                                              "Conway's Game of Life",
-                                              "by",
-                                              "J. H. Sundqvist"]
-  wait 4.5
-  cursorUp (7)
-  mapM putStrLn . replicate 8 . replicate 30 $ ' '
-  cursorUp (7)
-  putStrLn $ centre ' ' 30 "GOOD BYE"
-  cursorDown $ 7
-  where
-    centre c ln t = let d = fromIntegral (ln - length t)/2 in replicate (floor d) c ++ t ++ replicate (ceiling d) c
+main = Console.main

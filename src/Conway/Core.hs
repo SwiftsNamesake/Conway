@@ -58,15 +58,17 @@ simulate = iterate tick
 -- | The number of living cells adjacent to each cell (between 0 and 8)
 -- TODO: Rewrite the gobbledygook above
 neighbours :: Integral n => Universe -> Neighbours n
-neighbours uni@(Universe u) = Neighbours $ walk (\cl rw cell -> (fromIntegral . nliving $ adjacent uni cl rw, cell)) u
+neighbours uni@(Universe u) = Neighbours $ walk neighbour u
   where
-    nliving = length . filter (==Alive)
+    neighbour cl rw cell = (count (==Alive) $ adjacent uni cl rw, cell)
+    count p = fromIntegral . length . filter p
 
 
 -- |
 adjacent :: Universe -> Int -> Int -> [Cell]
-adjacent uni cl rw = catMaybes $ map (uncurry (at uni) . absolute) [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
+adjacent uni cl rw = catMaybes $ map (uncurry (at uni) . absolute) steps
   where
+    steps = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
     absolute (dx, dy) = (cl+dx, rw+dy)
 
 
@@ -91,9 +93,9 @@ at (Universe u) cl rw = (u !? cl) >>= (!? rw)
 
 -- | Advances the universe to the next generation
 tick :: Universe -> Universe
-tick (Universe u) = Universe $ walk (\_ _ -> uncurry survives) ns -- map (map isalive) (neighbours uni)
+tick uni = Universe $ walk (\_ _ -> uncurry survives) ns -- map (map isalive) (neighbours uni)
   where
-    (Neighbours ns) = neighbours (Universe u)
+    (Neighbours ns) = neighbours uni
 
 
 -- | Should the cell be alive or dead in the next generation?
@@ -105,8 +107,3 @@ survives n
   | n == 2 = id          -- Any live cell with two
   | n == 3 = const Alive -- or three live neighbours lives on to the next generation. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
   | n > 3  = const Dead  -- Any live cell with more than three live neighbours dies, as if by over-population.
-
-
--- |
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"

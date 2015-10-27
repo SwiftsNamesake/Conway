@@ -28,7 +28,7 @@
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- API
 --------------------------------------------------------------------------------------------------------------------------------------------
-module Conway.Rendering.Console (module Conway.Rendering.Console, module System.Console.ANSI) where
+module Conway.Rendering.Console (module Conway.Rendering.Console) where
 
 
 
@@ -49,6 +49,30 @@ import Conway.Core
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- Functions
 --------------------------------------------------------------------------------------------------------------------------------------------
+
+-- |
+main :: IO ()
+main = do
+  setTitle "Conway's Game of Life"
+  animate 3 . take 10 $ simulate initial
+  clear 30 (height initial)
+  cursorUp (height initial)
+  putStrLn . unlines . map (centre ' ' 30) $ ["",
+                                              "THANKS FOR WATCHING",
+                                              "",
+                                              "Conway's Game of Life",
+                                              "by",
+                                              "J. H. Sundqvist"]
+  wait 4.5
+  cursorUp (7)
+  clear 30 (height initial)
+  cursorUp (7)
+  putStrLn $ centre ' ' 30 "GOOD BYE"
+  cursorDown $ 7
+  where
+    clear w h     = mapM putStrLn . replicate h . replicate w $ ' '
+    centre c ln t = let d = fromIntegral (ln - length t)/2 in replicate (floor d) c ++ t ++ replicate (ceiling d) c
+
 
 -- |
 animate :: Int -> [Universe] -> IO ()

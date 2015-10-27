@@ -42,11 +42,11 @@ module Conway.Core.Types where
 --------------------------------------------------------------------------------------------------------------------------------------------
 
 -- |
-newtype Universe = Universe { cells :: [[Cell]] } -- deriving (Functor)
+newtype Universe = Universe { cells :: [[Cell]] } deriving (Eq, Show)
 
 
 -- |
-newtype Neighbours n = Neighbours [[(n, Cell)]]
+newtype Neighbours n = Neighbours [[(n, Cell)]] deriving (Eq, Show)
 
 
 -- |
